@@ -7,9 +7,15 @@ import pandas as pd
 
 from nba_api.stats.endpoints import playercareerstats
 from nba_api.stats.static import players
+from nba_api.stats.endpoints import commonallplayers
 
+all_players = commonallplayers.CommonAllPlayers(is_only_current_season=1)
 
+# Get the data frame containing information about all players
+all_players_data = all_players.get_data_frames()[0]
 
+# Extract the player names from the data frame
+all_players = all_players_data['DISPLAY_FIRST_LAST'].tolist()
 
 
 def get_id():
@@ -24,16 +30,33 @@ def get_id():
     total_players = 0
     
     # While loop should be <= 13 for each player, might need to find a better way for input
-    while total_players <= 1:
-          player_dictionary = players.find_players_by_full_name(input("Whos is a player on your team?\n"))
-          team_ids.append(player_dictionary[0]["id"])
-          player_names.append(player_dictionary[0]["full_name"])
-          total_players += 1
+    # while total_players <= 0:
+    #       player_dictionary = players.find_players_by_full_name(input("Who is a player on your team you want to compare?\n"))
+    #       # team_ids.append(player_dictionary[0]["id"])
+    #       # player_names.append(player_dictionary[0]["full_name"])
+    #       total_players += 1
+          
+    # if player_dictionary in all_players:
+    #     team_ids.append(player_dictionary[0]["id"])
+    #     player_names.append(player_dictionary[0]["full_name"])
+    # else:
+    #     print("wrong")
+        
+    while True:
+        player_input = input("Enter the name of an NBA player: \n")
+        if player_input in all_players:
+            player_dictionary = players.find_players_by_full_name(player_input)
+            print("Player found:", player_input)
+            team_ids.append(player_dictionary[0]["id"])
+            player_names.append(player_dictionary[0]["full_name"])
+            break 
+        else:
+            print("Player not found. Please enter a valid NBA player.")
+            # Prompt for another input
+            continue
  
     return team_ids, player_names
     
-
-
 def find_player(team_ids):
     """
     Takes in the player id and returns the data frame with all stats from 
@@ -49,8 +72,7 @@ def find_player(team_ids):
         
     return dataframes
 
-
-
+                                      
 
 def get_stats(dataframes):
     """
@@ -59,7 +81,7 @@ def get_stats(dataframes):
     """
 
   
-    df_current_season = []
+    # df_current_season = []
     
     
     for df in dataframes:
@@ -87,35 +109,31 @@ def get_stats(dataframes):
         df = pd.DataFrame(data_frame)
         
         
-        df_current_season.append(df)
+        # df_current_season.append(df)
         
         {"Jayson Tatum": df, "Jaylen Brown": df}
         
 
-    return df_current_season
-    
-    
-    
-    
-    
-    
-
+    return df
         
         
         
 def main():
     
-    # list of team_ids and player names
-    team_ids, player_names = get_id()
-    print(player_names)
+     # list of team_ids and player names
+     team_ids1, player_names1 = get_id()
+     team_ids2, player_names2 = get_id()
     
-    # Career statistics dataframe
-    player_dataframes = find_player(team_ids)
-   # print(player_dataframes)
+     # Career statistics dataframe
+     player_dataframes1 = find_player(team_ids1)
+     player_dataframes2 = find_player(team_ids2)
+    # print(player_dataframes)
     
-    # Current season statistic dataframe
-    season_data = get_stats(player_dataframes)
-    print(season_data)
+     # Current season statistic dataframe
+     season_data1 = get_stats(player_dataframes1)
+     season_data2 = get_stats(player_dataframes2)
+     print(season_data1)
+     print(season_data2)
 
 
 
@@ -128,3 +146,6 @@ if __name__ == "__main__":
 
 
 
+
+
+    
