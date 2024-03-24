@@ -26,21 +26,6 @@ def get_id():
     
     team_ids = []
     player_names = []
-    
-    total_players = 0
-    
-    # While loop should be <= 13 for each player, might need to find a better way for input
-    # while total_players <= 0:
-    #       player_dictionary = players.find_players_by_full_name(input("Who is a player on your team you want to compare?\n"))
-    #       # team_ids.append(player_dictionary[0]["id"])
-    #       # player_names.append(player_dictionary[0]["full_name"])
-    #       total_players += 1
-          
-    # if player_dictionary in all_players:
-    #     team_ids.append(player_dictionary[0]["id"])
-    #     player_names.append(player_dictionary[0]["full_name"])
-    # else:
-    #     print("wrong")
         
     while True:
         player_input = input("Enter the name of an NBA player: \n")
@@ -95,26 +80,70 @@ def get_stats(dataframes):
         turnovers = current_season_data['TOV']
         fg_made = current_season_data['FGM']
         fg_attempted = current_season_data['FGA']
-        fg_missed = fg_attempted - fg_made
-        
+        three_pm = current_season_data["FG3M"]
+
+    
         
         data_frame = {
 "Points" : [round(points/games_played, 1)], "Rebounds" : [round(rebounds/games_played, 1)],
 "Assists" : [round(assists/games_played, 1)], "Blocks" : [round(blocks/games_played, 1)], 
 "Steals" : [round(steals/games_played, 1)], "Turnovers" : [round(turnovers/games_played, 1)],
-"FG Missed" : [round(fg_missed/games_played, 1)]
+"FG Made" : [round(fg_made/games_played, 1)], "FG Attempted" : [round(fg_attempted/games_played, 1)],
+"FG3M" : [round(three_pm/games_played, 1)]
 
 }
     
         df = pd.DataFrame(data_frame)
         
-        
-        # df_current_season.append(df)
-        
-        {"Jayson Tatum": df, "Jaylen Brown": df}
-        
 
     return df
+
+
+
+
+def find_algo(df):
+    
+    # How many fantasy points per category
+
+    f_points = 1
+    f_steals = 4
+    f_assists = 2
+    f_rebounds = 1
+    f_turnovers = -2
+    f_fgm = 2
+    f_fga = -1
+    f_tpm = 1
+    f_blocks = 4
+
+    # Average Fantasy Points Total per Player
+
+    points_total = f_points * (df.loc[0, "Points"])
+    steals_total = f_steals * (df.loc[0, "Steals"])
+    assists_total = f_assists * (df.loc[0, "Assists"])
+    rebounds_total = f_rebounds * (df.loc[0, "Rebounds"])
+    turnovers_total = f_turnovers * (df.loc[0, "Turnovers"])
+    fgm_total = f_fgm * (df.loc[0, "FG Made"])
+    fga_total = f_fga * (df.loc[0, "FG Attempted"])
+    tpm_total = f_tpm * (df.loc[0, "FG3M"])
+    blocks_total = f_blocks * (df.loc[0, "Blocks"])
+    
+    avg_fp = points_total + steals_total + assists_total +\
+        rebounds_total + turnovers_total + fgm_total + fga_total + tpm_total\
+            + blocks_total
+            
+            
+    return round(avg_fp)
+
+
+        
+        
+def algorithm(fantasy_p):
+    
+    algorithm = fantasy_p #* ovpp
+    
+    return algorithm
+        
+        
         
         
         
@@ -127,13 +156,28 @@ def main():
      # Career statistics dataframe
      player_dataframes1 = find_player(team_ids1)
      player_dataframes2 = find_player(team_ids2)
-    # print(player_dataframes)
+    
+    
     
      # Current season statistic dataframe
      season_data1 = get_stats(player_dataframes1)
-     season_data2 = get_stats(player_dataframes2)
      print(season_data1)
+     algo_data_1 = find_algo(season_data1)
+     player_1_algo = algorithm(algo_data_1)
+     print(player_1_algo)
+     
+   
+     season_data2 = get_stats(player_dataframes2)
      print(season_data2)
+     algo_data_2 = find_algo(season_data2)
+     player_2_algo = algorithm(algo_data_2)
+     print(player_2_algo)
+     
+     
+     
+     
+     
+    
 
 
 
